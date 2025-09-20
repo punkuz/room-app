@@ -8,17 +8,27 @@ import { UsersModule } from 'src/users/users.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT ? +process.env.DB_PORT : 5432,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      // autoLoadEntities: true,
-      synchronize: process.env.NODE_ENV !== 'production',
-      // logging: true,
+    TypeOrmModule.forRootAsync({
+      useFactory() {
+        try {
+          return {
+            type: 'postgres',
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT ? +process.env.DB_PORT : 5432,
+            username: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            // autoLoadEntities: true,
+            synchronize: process.env.NODE_ENV !== 'production',
+            // logging: true,
+            dropSchema: true,
+          };
+        } catch (error) {
+          console.error(`Database connection error: ${error}`);
+          throw new Error(`Database connection error: ${error}`);
+        }
+      },
     }),
     UsersModule,
   ],

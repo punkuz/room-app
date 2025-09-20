@@ -1,6 +1,9 @@
-import { Column, Entity } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
+
+import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, Length } from 'class-validator';
+import { RpcException } from '@nestjs/microservices';
 
 @Entity()
 export class User extends BaseEntity {
@@ -21,4 +24,32 @@ export class User extends BaseEntity {
     message: "Role must be either 'user' or 'admin' or 'guide'!",
   })
   role: 'user' | 'admin' | 'guide';
+
+  @Column({ select: false })
+  @IsNotEmpty({ message: 'Please provide a password!' })
+  @Length(8, 50, { message: 'Password must be between 8 and 50 characters!' })
+  password: string;
+
+  @Column({ select: false, nullable: true })
+  @IsNotEmpty({ message: 'Please confirm your password!' })
+  passwordConfirm?: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  lastLogin?: Date;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.password !== this.passwordConfirm) {
+      throw new RpcException('Passwords do not match!');
+    }
+    if (this.password && this.password.length >= 8) {
+      try {
+        this.password = await bcrypt.hash(this.password, 12);
+      } catch (error) {
+        throw new RpcException(error as object);
+      }
+    }
+    this.passwordConfirm = undefined; // Assign `null` instead of `undefined`
+  }
 }

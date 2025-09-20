@@ -16,10 +16,10 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'Please provide a role!' })
   role: 'user' | 'admin' | 'guide' = 'user';
 
-  // @IsNotEmpty({ message: 'Please provide a password!' })
-  // @Length(8, 50, { message: 'Password must be between 8 and 50 characters!' })
-  // password: string;
+  @IsNotEmpty({ message: 'Please provide a password!' })
+  @Length(8, 50, { message: 'Password must be between 8 and 50 characters!' })
+  password: string;
 
-  // @IsNotEmpty({ message: 'Please confirm your password!' })
-  // passwordConfirm: string;
+  @IsNotEmpty({ message: 'Please confirm your password!' })
+  passwordConfirm: string;
 }
