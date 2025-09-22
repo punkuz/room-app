@@ -11,7 +11,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateUserDto } from 'src/user/dto';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayloadDto } from "./dto/jwt-payload.dto";
+import { JwtPayloadDto } from './dto/jwt-payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +28,7 @@ export class AuthService {
     }
     // 2) Check if user exists && password is correct
     const user: CreateUserDto = await firstValueFrom(
-      this.userClient.send({ cmd: 'findUserByEmail' }, { email }),
+      this.userClient.send({ cmd: 'findUserByEmail' }, email),
     );
 
     if (!user || !(await this.correctPassword(password, user.password))) {
@@ -70,7 +70,9 @@ export class AuthService {
         user,
       };
     } catch (error) {
-      throw new BadRequestException(error?.message || 'Error creating user');
+      throw new BadRequestException(
+        (error as Error).message || 'Error creating user',
+      );
     }
   }
 
@@ -96,7 +98,7 @@ export class AuthService {
       return await bcrypt.compare(candidatePassword, userPassword);
     } catch (error) {
       throw new BadRequestException(
-        error?.message || 'Error comparing passwords',
+        (error as Error)?.message || 'Error comparing passwords',
       );
     }
   }

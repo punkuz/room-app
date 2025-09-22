@@ -8,6 +8,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { HttpRpcException } from 'src/exceptions/http.rpc.exception';
 
 @Controller()
 export class UsersController {
@@ -25,13 +26,15 @@ export class UsersController {
 
   @MessagePattern({ cmd: 'findUserById' })
   findOne(@Payload() id: number) {
-    console.log('id', id);
     return this.usersService.findOne(id);
   }
 
   @MessagePattern({ cmd: 'findUserByEmail' })
   findByEmail(@Payload() email: string) {
-    return this.usersService.findByEmail(email['email']);
+    if (!email) {
+      throw HttpRpcException.badRequest('Email must be provided');
+    }
+    return this.usersService.findByEmail(email);
   }
 
   @MessagePattern({ cmd: 'updateUser' })

@@ -4,6 +4,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { IsEmail, IsEnum, IsNotEmpty, Length } from 'class-validator';
 import { RpcException } from '@nestjs/microservices';
+import { HttpRpcException } from "src/exceptions/http.rpc.exception";
 
 @Entity()
 export class User extends BaseEntity {
@@ -41,7 +42,7 @@ export class User extends BaseEntity {
   @BeforeUpdate()
   async hashPassword() {
     if (this.password !== this.passwordConfirm) {
-      throw new RpcException('Passwords do not match!');
+      throw HttpRpcException.badRequest('Passwords do not match!');
     }
     if (this.password && this.password.length >= 8) {
       try {
