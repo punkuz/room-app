@@ -24,8 +24,15 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return this.userRepository.findOne({ where: { id } });
+  async findOne(id: number) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new RpcException('User not found.');
+    }
+    return user;
   }
 
   async findByEmail(email: string) {

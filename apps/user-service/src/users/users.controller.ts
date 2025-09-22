@@ -23,8 +23,9 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @MessagePattern({ cmd: 'findOneUser' })
+  @MessagePattern({ cmd: 'findUserById' })
   findOne(@Payload() id: number) {
+    console.log('id', id);
     return this.usersService.findOne(id);
   }
 

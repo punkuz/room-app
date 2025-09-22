@@ -1,11 +1,17 @@
 import { firstValueFrom } from 'rxjs';
 import * as bcrypt from 'bcryptjs';
 
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateUserDto } from 'src/user/dto';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayloadDto } from "./dto/jwt-payload.dto";
 
 @Injectable()
 export class AuthService {
@@ -29,7 +35,7 @@ export class AuthService {
       throw new BadRequestException('Incorrect email or password');
     }
 
-    //generate JWT toke
+    //generate JWT token
     const access_token = await this.generateToken(user);
 
     //update last login
@@ -53,7 +59,12 @@ export class AuthService {
       );
       user.password = '';
       //generate JWT token
-      const access_token = await this.jwtService.signAsync(user);
+      const payload: JwtPayloadDto = {
+        username: user.username,
+        id: user.id,
+        role: user.role,
+      };
+      const access_token = await this.jwtService.signAsync(payload);
       return {
         access_token,
         user,
@@ -65,14 +76,16 @@ export class AuthService {
 
   async generateToken(user: CreateUserDto) {
     try {
-      const payload = {
+      const payload: JwtPayloadDto = {
         username: user.username,
-        sub: user.id,
+        id: user.id,
         role: user.role,
       };
       return await this.jwtService.signAsync(payload);
     } catch (error) {
-      throw new BadRequestException(error?.message || 'Error generating token');
+      const message =
+        error instanceof Error ? error.message : 'Error generating token';
+      throw new BadRequestException(message);
     }
   }
   async correctPassword(
@@ -85,6 +98,15 @@ export class AuthService {
       throw new BadRequestException(
         error?.message || 'Error comparing passwords',
       );
+    }
+  }
+
+  async verifyToken(token: string): Promise<JwtPayloadDto> {
+    try {
+      return await this.jwtService.verifyAsync(token);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Invalid token';
+      throw new UnauthorizedException(message);
     }
   }
 }

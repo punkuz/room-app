@@ -1,7 +1,8 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Controller, Get, Inject, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateUserDto } from './dto';
 import { lastValueFrom } from 'rxjs';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -9,9 +10,16 @@ export class UserController {
     @Inject('USER_CLIENT') private readonly userClient: ClientProxy,
   ) {}
 
+  @UseGuards(AuthGuard)
   @Get()
   findAll(): Promise<CreateUserDto[]> {
-    console.log("test", process.env.RABBITMQ_URL);
+    console.log('test', process.env.RABBITMQ_URL);
     return lastValueFrom(this.userClient.send({ cmd: 'findAllUsers' }, {}));
+  }
+
+  @UseGuards(AuthGuard)
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<CreateUserDto> {
+    return lastValueFrom(this.userClient.send({ cmd: 'findUserById' }, id));
   }
 }
