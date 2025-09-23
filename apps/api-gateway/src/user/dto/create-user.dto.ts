@@ -1,4 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, Length } from 'class-validator';
+import { Role } from 'src/types/enums';
 
 // DTO for creating a new user
 export class CreateUserDto {
@@ -12,11 +13,11 @@ export class CreateUserDto {
 
   uniqueSlug?: string;
 
-  @IsEnum(['user', 'admin', 'guide'], {
+  @IsEnum(Role, {
     message: "Role must be either 'user' or 'admin' or 'guide!",
   })
   @IsNotEmpty({ message: 'Please provide a role!' })
-  role: 'user' | 'admin' | 'guide' = 'user';
+  role: Role = Role.User;
 
   @IsNotEmpty({ message: 'Please provide a password!' })
   @Length(8, 50, { message: 'Password must be between 8 and 50 characters!' })
