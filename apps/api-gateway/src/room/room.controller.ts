@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -53,7 +55,7 @@ export class RoomController {
    * desc update a room
    * @route /api/v1/rooms/:id
    */
-  @Post(':id')
+  @Patch(':id')
   updateRoom(@Param('id') id: number, updateRoomDto: UpdateRoomDto) {
     return this.roomClient.send({ cmd: 'updateRoom' }, { id, updateRoomDto });
   }
@@ -62,7 +64,7 @@ export class RoomController {
    * desc delete a room
    * @route /api/v1/rooms/:id
    */
-  @Post(':id')
+  @Delete(':id')
   deleteRoom(@Param('id') id: number) {
     return this.roomClient.send({ cmd: 'removeRoom' }, id);
   }
