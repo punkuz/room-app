@@ -45,9 +45,6 @@ import { UsersModule } from 'src/users/users.module';
   providers: [],
 })
 export class AppModule implements OnModuleInit {
-  constructor() {
-    console.log('AppModule loaded');
-  }
   onModuleInit() {
     console.log('AppModule initialized');
     process.on('uncaughtException', (err) => {
