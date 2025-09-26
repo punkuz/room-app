@@ -23,7 +23,7 @@ export class RoomsService {
     }
   }
 
-  findAll() {
+  findAll(): Promise<Room[]> {
     return this.roomRepository.find();
   }
 

@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, ParseIntPipe } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -14,7 +14,7 @@ export class RoomsController {
   }
 
   @MessagePattern({ cmd: 'findAllRooms' })
-  findAll() {
+  findAll(): Promise<CreateRoomDto[]> {
     return this.roomsService.findAll();
   }
 
@@ -29,7 +29,7 @@ export class RoomsController {
   }
 
   @MessagePattern({ cmd: 'removeRoom' })
-  remove(@Payload() id: number) {
+  remove(@Payload(ParseIntPipe) id: number) {
     return this.roomsService.remove(id);
   }
 }

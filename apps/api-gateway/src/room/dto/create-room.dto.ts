@@ -17,8 +17,8 @@ export class CreateRoomDto {
   type: string;
 
   @IsNotEmpty({ message: 'Please provide a room number!' })
-  @IsString()
-  roomNumber: string;
+  @IsNumber()
+  roomNumber: number;
 
   @IsNotEmpty({ message: 'Please provide a description!' })
   @IsString()

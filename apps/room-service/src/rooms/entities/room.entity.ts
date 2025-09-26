@@ -14,7 +14,7 @@ export class Room extends BaseEntity {
 
   @Column({ unique: true })
   @IsNotEmpty({ message: 'Please provide a room number!' })
-  roomNumber: string;
+  roomNumber: number;
 
   @Column()
   @IsNotEmpty({ message: 'Please provide a description!' })
@@ -36,7 +36,7 @@ export class Room extends BaseEntity {
   @IsNumber()
   discount?: number;
 
-  @Column()
+  @Column({ nullable: true })
   @IsOptional()
   image?: string;
 }
