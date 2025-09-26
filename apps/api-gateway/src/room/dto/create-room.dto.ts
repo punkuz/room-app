@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsNumber,
@@ -17,25 +18,29 @@ export class CreateRoomDto {
   type: string;
 
   @IsNotEmpty({ message: 'Please provide a room number!' })
-  @IsNumber()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'roomNumber must be a number' })
   roomNumber: number;
 
   @IsNotEmpty({ message: 'Please provide a description!' })
   @IsString()
   description: string;
 
-  @Min(1, { message: 'Minimum capacity is 1!' })
+  @Type(() => Number)
   @IsNotEmpty({ message: 'Please provide a capacity!' })
+  @IsNumber({}, { message: 'Capacity must be a number' })
+  @Min(1, { message: 'Minimum capacity is 1!' })
   @Max(5, { message: 'Maximum capacity is 5!' })
-  @IsNumber()
   capacity: number;
 
   @IsNotEmpty({ message: 'Please provide a price!' })
-  @IsNumber()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'Price must be a number' })
   regularPrice: number;
 
   @IsOptional()
-  @IsNumber()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'Discount must be a number' })
   discount?: number;
 
   @IsOptional()

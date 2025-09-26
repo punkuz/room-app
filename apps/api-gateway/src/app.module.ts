@@ -3,8 +3,8 @@ import { UserController } from './user/user.controller';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ClientModule } from './client/client.module';
-import { RoomController } from './room/room.controller';
 import { BookingController } from './booking/booking.controller';
+import { RoomModule } from './room/room.module';
 
 // @Global()
 @Module({
@@ -14,8 +14,9 @@ import { BookingController } from './booking/booking.controller';
     }),
     AuthModule,
     ClientModule,
+    RoomModule,
   ],
-  controllers: [UserController, RoomController, BookingController],
+  controllers: [UserController, BookingController],
   providers: [],
 })
 export class AppModule {}

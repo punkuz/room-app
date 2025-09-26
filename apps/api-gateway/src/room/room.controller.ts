@@ -1,13 +1,17 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   Inject,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -16,8 +20,10 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/types/enums';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { firstValueFrom } from 'rxjs';
 
-@Controller('room')
+@Controller('rooms')
 export class RoomController {
   constructor(
     @Inject('ROOM_CLIENT') private readonly roomClient: ClientProxy,
@@ -29,9 +35,22 @@ export class RoomController {
   @Post()
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
-  createRoom(@Body() createRoomDto: CreateRoomDto) {
-    console.log(createRoomDto);
-    return this.roomClient.send({ cmd: 'createRoom' }, createRoomDto);
+  @UseInterceptors(FileInterceptor('image'))
+  async createRoom(
+    @Body() createRoomDto: CreateRoomDto,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    try {
+      const res = await firstValueFrom<CreateRoomDto>(
+        this.roomClient.send(
+          { cmd: 'createRoom' },
+          { ...createRoomDto, image: image.filename },
+        ),
+      );
+      return res;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
   /**
    * desc get all rooms
@@ -47,8 +66,8 @@ export class RoomController {
    * @route /api/v1/rooms/:id
    */
   @Get(':id')
-  getRoomById() {
-    return this.roomClient.send({ cmd: 'findRoomById' }, {});
+  getRoomById(@Param('id', ParseIntPipe) id: number) {
+    return this.roomClient.send({ cmd: 'findRoomById' }, id);
   }
 
   /**

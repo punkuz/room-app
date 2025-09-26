@@ -4,7 +4,6 @@ import { UpdateRoomDto } from './dto/update-room.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Room } from './entities/room.entity';
 import { Repository } from 'typeorm';
-import { RpcException } from '@nestjs/microservices';
 import { HttpRpcException } from 'src/exceptions/http.rpc.exception';
 
 @Injectable()
