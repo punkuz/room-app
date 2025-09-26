@@ -1,0 +1,15 @@
+{
+  "name": "@room/db",
+  "version": "1.0.0",
+  "description": "A db module",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "typescript": "latest"
+  }
+}
