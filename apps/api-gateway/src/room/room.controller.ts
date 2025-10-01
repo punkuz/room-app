@@ -75,8 +75,19 @@ export class RoomController {
    * @route /api/v1/rooms/:id
    */
   @Patch(':id')
-  updateRoom(@Param('id') id: number, updateRoomDto: UpdateRoomDto) {
-    return this.roomClient.send({ cmd: 'updateRoom' }, { id, updateRoomDto });
+  @Roles(Role.Admin, Role.User)
+  @UseGuards(AuthGuard, RolesGuard)
+  async updateRoom(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateRoomDto: UpdateRoomDto,
+  ) {
+    try {
+      return await firstValueFrom<UpdateRoomDto>(
+        this.roomClient.send({ cmd: 'updateRoom' }, { id, updateRoomDto }),
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   /**

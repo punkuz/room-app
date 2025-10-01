@@ -24,8 +24,8 @@ export class RoomsController {
   }
 
   @MessagePattern({ cmd: 'updateRoom' })
-  update(@Payload() updateRoomDto: UpdateRoomDto) {
-    return this.roomsService.update(updateRoomDto.id, updateRoomDto);
+  update(@Payload() payload: { id: number; updateRoomDto: UpdateRoomDto }) {
+    return this.roomsService.update(payload.id, payload.updateRoomDto);
   }
 
   @MessagePattern({ cmd: 'removeRoom' })
