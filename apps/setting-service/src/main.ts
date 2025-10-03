@@ -9,7 +9,7 @@ async function bootstrap() {
       transport: Transport.RMQ,
       options: {
         urls: [process.env.RABBITMQ_URL || 'amqp://localhost:5672'],
-        queue: 'booking_queue',
+        queue: 'setting_queue',
         queueOptions: {
           durable: false,
         },
@@ -17,6 +17,6 @@ async function bootstrap() {
     },
   );
   await app.listen();
-  console.log('Booking Microservice is running');
+  console.log('Setting Microservice is listening');
 }
 bootstrap();

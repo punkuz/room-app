@@ -4,7 +4,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { IsEmail, IsEnum, IsNotEmpty, Length } from 'class-validator';
 import { RpcException } from '@nestjs/microservices';
-import { HttpRpcException } from "src/exceptions/http.rpc.exception";
+import { HttpRpcException } from 'src/exceptions/http.rpc.exception';
 
 @Entity()
 export class User extends BaseEntity {
