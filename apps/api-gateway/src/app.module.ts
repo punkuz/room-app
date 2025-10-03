@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ClientModule } from './client/client.module';
 import { BookingController } from './booking/booking.controller';
 import { RoomModule } from './room/room.module';
+import { SettingController } from './setting/setting.controller';
 
 // @Global()
 @Module({
@@ -16,7 +17,7 @@ import { RoomModule } from './room/room.module';
     ClientModule,
     RoomModule,
   ],
-  controllers: [UserController, BookingController],
+  controllers: [UserController, BookingController, SettingController],
   providers: [],
 })
 export class AppModule {}
